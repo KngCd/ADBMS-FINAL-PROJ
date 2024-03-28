@@ -6,15 +6,17 @@ This Project is a requirement for our ADBMS course. This is a simple Learning Ma
 
 ## This is what our system appears as when it is operational.
 
-![Homepage](Pictures/Camera%20Roll/sample1)
+![Homepage](Camera%20Roll/sample1.png)
 
-![Homepage2](Pictures/Camera%20Roll/sample2)
+![Homepage2](Camera%20Roll/sample2.png)
 
-![Homepage3](Pictures/Camera%20Roll/sample3)
+![Homepage3](Camera%20Roll/sample3.png)
 
-![Homepage](Pictures/Camera%20Roll/sample1.png)
+![Signin](Camera%20Roll/sample4.png)
 
-![Homepage](Pictures/Camera%20Roll/sample1.png)
+![Signup](Camera%20Roll/sample5.png)
+
+![Reset%20Password](Camera%20Roll/sample6.png)
 
 
 
