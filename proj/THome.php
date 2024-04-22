@@ -48,24 +48,17 @@
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
           <i  id="school-icon" class="fa-solid fa-book-open"></i>
           <p>Task Mastery</p>
-
           <script>
-          function openNav() {
+            function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
-          }
+            document.getElementById("main").style.marginLeft = "250px";
+            }
 
-          function closeNav() {
+            function closeNav() {
             document.getElementById("mySidenav").style.width = "0";
-          }
-          function openNav() {
-            document.getElementById("mySidenav").classList.add("open");
-            document.body.classList.add("sidebar-open");
-          }
+            document.getElementById("main").style.marginLeft= "0";
+            }
 
-          function closeNav() {
-            document.getElementById("mySidenav").classList.remove("open");
-            document.body.classList.remove("sidebar-open");
-          }
           </script>
           <script>
           /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
@@ -94,7 +87,7 @@
       </div>
     </div>
 
-    <div class="container2">
+    <div class="container2" id="main">
   <?php
     $id = $_SESSION['id'];
 
@@ -109,7 +102,29 @@
         <div class="container" data-color="">
           <p><?php echo $row['Username']; ?></p><br>
           <h4><b><?php echo $row['subject']; ?></b></h4>
-          <p><?php echo 'Classcode: ' . $row['classcode']; ?></p>
+          <p>Classcode:<?php echo $row['classcode']; ?></p>
+            <form action="class-stream.php" method="post" class="form" id="class-stream-form-<?php echo $row['classcode']; ?>">
+              <input type="hidden" name="subject" value="<?php echo $row['subject']; ?>">
+              <input type="hidden" name="classcode" value="<?php echo $row['classcode']; ?>">
+              <a href="#" class="submit-button" data-form-id="class-stream-form-<?php echo $row['classcode']; ?>">
+                <i class="fa-solid fa-circle-arrow-right"></i>
+              </a>
+            </form>
+            <script>
+            $(document).ready(function() {
+              $('.submit-button').click(function(e) {
+                e.preventDefault();
+
+                var formId = $(this).data('form-id');
+                $('#' + formId).submit();
+
+                // Redirect to the next page
+                setTimeout(function() {
+                  window.location.href = "class-stream.php";
+                }, 100);
+              });
+            });
+              </script>
         </div>
       </div>
       <script>
