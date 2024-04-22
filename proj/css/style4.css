@@ -21,7 +21,7 @@ html, body{
 .left-side{
     display: flex;
     align-items: center;
-    width: 350px;
+    width: 700px;
     justify-content: space-evenly;
 }
 
@@ -29,7 +29,20 @@ html, body{
     font-size: 24px;
     color: #818181;
 }
-
+.left-side .tm{
+  text-decoration: none;
+}
+.left-side .tm:hover{
+  text-decoration: underline;
+  text-decoration-color: black; 
+  text-decoration-style: 2px solid;
+}
+.sub { 
+  font-weight: bold; 
+  font-size: 16px;
+  color: #818181;
+  float: right;
+}
 .sidenav {
     height: 100%;
     max-height: 100vh;
@@ -182,7 +195,8 @@ form {
   height: 250px;
   width: 450px;
   margin: auto;
-  background-color: #aaa;
+  background-color: #fff;
+  border: 2px solid #0c3666;
   margin-top: 30px;
   border-radius: 10px;
   padding-top: 10px;
@@ -192,18 +206,19 @@ form {
   box-shadow: 20px 10px 20px 10px rgba(255,255,255,0.5);
 }
 
-.field .btn {
-  border-radius: 20px;
+.btn{
+  border-radius: 30px;
   background: #0c3666;
   color: #fff;
   font-size: 12px;
   font-weight: bold;
-  padding: 12px 45px;
+  width: 130px;
+  height: 50px;
+  margin-top: 30px;
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: opacity 0.2s ease;
   cursor: pointer;
-  margin-top: 20px;
 }
 
 .btn:hover{
@@ -273,7 +288,11 @@ input:is(:focus, :valid) + .placeholder {
 .card:hover {
   box-shadow: 10px 16px 16px 1px rgba(0,0,0,0.2);
 }
-
+.card .form a{
+  width: 100px;
+  height: 50px;
+  width: 100%;
+}
 .container2{
     display: flex;
     flex-direction: row;
@@ -301,3 +320,56 @@ input:is(:focus, :valid) + .placeholder {
   z-index: -1;
 }
 
+.fa-circle-arrow-right{
+  font-size: 18px;
+  margin-left: 280px;
+  position: absolute;
+  top: 50px;
+  color: #0c3666;
+  transition: all 100ms ease-in-out;
+  cursor: pointer;
+}
+.fa-circle-arrow-right:hover{
+  font-size: 25px;
+}
+
+/* class stream */
+.fa-greater-than{
+  font-size: 20px;
+  color: #aaa;
+}
+
+.input-container .btn-2{
+  border-radius: 35px;
+  background: #0c3666;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  width: 130px;
+  height: 50px;
+  margin-top: 30px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: opacity 0.2s ease;
+  padding-left: 30px; /* add some padding to the right of the input field */
+  text-align: center;
+  cursor: pointer;
+}
+
+.input-container .btn-2:hover{
+  opacity: 0.7;
+}
+
+.input-container {
+  position: relative;
+  margin-left: 35%;
+}
+
+.input-container .fa-plus {
+  position: absolute;
+  left: 27px; /* adjust this value to position the icon horizontally */
+  top: 55px; /* adjust this value to position the icon vertically */
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 20px;
+}
