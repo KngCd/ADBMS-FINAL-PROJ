@@ -17,7 +17,7 @@
   <div class="header">
           <div class="left-side">
           <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
             <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
@@ -42,11 +42,12 @@
                   ?>
                 </div>
             <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
+            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
-          <i  id="school-icon" class="fa-solid fa-book-open"></i>
+          <i id="school-icon" class="fa-solid fa-book-open"></i>
           <p>Task Mastery</p>
 
           <script>
@@ -84,7 +85,9 @@
       <button onclick="location.href='join-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
+      <button onclick="location.href='Sedit.php'">
             <i class="fa-solid fa-user"></i>
+      </button>
       </div>
     </div>
 
@@ -93,7 +96,7 @@
     $id = $_SESSION['id'];
 
     // Fetch the teacher and the classes that the student joins
-    $query = mysqli_query($con, "SELECT t.Username, c.subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode JOIN teachers t ON c.teacher_id = t.Id WHERE cs.student_id = '$id'");
+    $query = mysqli_query($con, "SELECT t.Username, c.subject, cs.classcode FROM class_student cs JOIN class c ON cs.classcode = c.classcode JOIN teachers t ON c.teacher_id = t.Id WHERE cs.student_id = '$id'");
 
     // Iterate through the results and display a card for each class
     while ($row = mysqli_fetch_assoc($query)) {
@@ -101,8 +104,9 @@
       <div class="card">
       <div class="color"></div>
         <div class="container" data-color="">
+        <input type="submit" class="btn" data-classcode="<?php echo $row['classcode']; ?>" value="Unenroll">
           <p><?php echo $row['Username']; ?></p><br>
-          <h4><b><?php echo $row['subject']; ?></b></h4>
+          <h4><b><?php echo $row['subject']; ?></b></h4> <i class="fa-solid fa-circle-arrow-right"></i>
         </div>
       </div>
       <script>
@@ -129,7 +133,28 @@
                   }
               });
           });
-</script>
+      </script>
+      <script>
+          $(document).ready(function() {
+            $('.btn').off('click').click(function(e) {
+              e.preventDefault();
+              var classcode = $(this).data('classcode');
+              var id = <?php echo $id; ?>;
+
+              $.ajax({
+                type: 'POST',
+                url: 'delete_subject.php',
+                data: { classcode: classcode, id: id },
+                dataType: 'json',
+                success: function(response) {
+                  // Display the success message
+                  alert(response.success);
+                  location.reload();
+                }
+              });
+            });
+            });
+        </script>
   <?php
     }
   ?>
