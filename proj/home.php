@@ -39,19 +39,6 @@
 
     </div>
     </header>
-    <script>const contentContainer = document.querySelector('.content-container');
-
-        const handleScroll = () => {
-        const scrollPosition = window.pageYOffset;
-        const containerHeight = contentContainer.offsetHeight;
-        const imageHeight = contentContainer.offsetHeight;
-
-        const scrollPercentage = scrollPosition / (containerHeight - window.innerHeight);
-        const imageOffset = Math.round(imageHeight * scrollPercentage);
-
-        contentContainer.style.backgroundPositionY = `${imageOffset}px`;
-        };
-        </script>
        <script>
         window.addEventListener('scroll', function() {
             const headerLinks = document.querySelectorAll('#myHeader .topnav a'); // Select all the a elements inside the .topnav div
@@ -60,10 +47,12 @@
             if (scrollPosition > 50) {
                 headerLinks.forEach(link => {
                     link.style.color = 'black'; // Change the font color to black
+                    header.style.backgroundColor = 'rgba(30, 97, 243, 0.836)';
                 });
             } else {
                 headerLinks.forEach(link => {
                     link.style.color = ''; // Reset the font color to its default value
+                    header.style.backgroundColor = 'transparent';
                 });
             }
             const headerLinks1 = document.querySelectorAll('#myHeader .h2 p'); // Select all the a elements inside the .topnav div
@@ -192,8 +181,7 @@
                             Student
                             </p>
                             <p class="text-blk testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna
+                           "Facing laziness can be quite challenging. Sometimes, instead of battling against it, I find myself choosing to align with it."
                             </p>
                         </div>
                         </div>
@@ -210,7 +198,7 @@
                             <p class="text-blk position">
                             Student
                             </p>
-                            <p class="text-blk testimonial">
+                            <p class="text-blk testimonial"><br>
                             "When in doubt, just go with the flow; answers reveal themselves along the journey."
                             </p>
                         </div>
@@ -228,9 +216,8 @@
                             <p class="text-blk position">
                             Student
                             </p>
-                            <p class="text-blk testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna
+                            <p class="text-blk testimonial"><br> 
+                            "Nothing is impossible with God." <br> <br>Luke 1:37
                             </p>
                         </div>
                         </div>
@@ -247,7 +234,7 @@
                             <p class="text-blk position">
                             Student
                             </p>
-                            <p class="text-blk testimonial">
+                            <p class="text-blk testimonial"><br>
                             "God knew I'd be too powerful if I wasn't both procastinator and perfectionist
                             at the same time."
                             </p>
@@ -266,10 +253,9 @@
                             <p class="text-blk position">
                              Student
                             </p>
-                            <p class="text-blk testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna
-                            </p>
+                            <p class="text-blk testimonial"><br>
+                            "Technology can be helpful and destructive so be wise using it. Stream TTPD."
+                         </p>
                         </div>
                         </div>
                     </div>
@@ -285,9 +271,8 @@
                             <p class="text-blk position">
                             Student
                             </p>
-                            <p class="text-blk testimonial">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna
+                            <p class="text-blk testimonial"><br>
+                            "The minute you think of giving up, think of the reason why you held on for so long."
                             </p>
                         </div>
                         </div>
@@ -304,8 +289,44 @@
                             <p class="text-blk position">
                             Student
                             </p>
+                            <p class="text-blk testimonial"><br>
+                            "There is no secret ingredient, to make it special you just have to believe it is special."
+                            </p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="cards">
+                        <div class="img-wrapper">
+                            <img src="images/alyon.jpg">
+                        </div>
+                        <div class="card-content">
+                            <p class="text-blk name">
+                            Alleon John I. Perez
+                            </p>
+                            <p class="text-blk position">
+                            Student
+                            </p>
                             <p class="text-blk testimonial">
-                            "Like butterflies unaware of their own beauty, you might not see your brilliance, but others do."
+                            “Education is for improving the lives of others and for leaving your community and world better than you found it.”
+                            </p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="cards">
+                        <div class="img-wrapper">
+                            <img src="images/den.jpg">
+                        </div>
+                        <div class="card-content">
+                            <p class="text-blk name">
+                            Denver T. Salazar
+                            </p>
+                            <p class="text-blk position">
+                            Student
+                            </p>
+                            <p class="text-blk testimonial"><br>
+                            “Education is the passport to the future, for tomorrow belongs to those who prepare for it today.”
                             </p>
                         </div>
                         </div>
@@ -388,7 +409,7 @@
             <label for='input' class='placeholder'>Contact Number</label>
         </div>
         <div class="input-wrapper-message">
-            <input type='text' id='input' autocomplete="off" required ></input>
+            <input type='text' id='input' autocomplete="off" required></input>
             <label for='input' class='placeholder'>Message</label>
         </div>
         <button>Submit</button>
