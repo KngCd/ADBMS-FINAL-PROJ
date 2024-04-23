@@ -17,7 +17,7 @@
   <div class="header">
           <div class="left-side">
           <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
             <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
@@ -42,7 +42,8 @@
                   ?>
                 </div>
             <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
+            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -83,7 +84,9 @@
       <button onclick="location.href='create-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
+      <button onclick="location.href='Tedit.php'">
             <i class="fa-solid fa-user"></i>
+        </button>
       </div>
     </div>
 
