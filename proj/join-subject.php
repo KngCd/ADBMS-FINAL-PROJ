@@ -16,7 +16,7 @@
   <div class="header">
       <div class="left-side">
       <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
         <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
         <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
         <button class="dropdown-btn">
@@ -29,7 +29,8 @@
           <a class="link2" href="#">Class 3</a>
         </div>
         <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-        <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+        <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
+        <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
       </div>
 
       <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -145,7 +146,7 @@
                         header('Location: ' . $_SERVER['PHP_SELF']);
                         exit;
                     } else{
-                        $_SESSION['Error'] = "Joining Successful! Please Return to your home now.";
+                        $_SESSION['Error'] = "Joining Unsuccessful! Please Return to your home now.";
                         header('Location: ' . $_SERVER['PHP_SELF']);
                         exit; 
                     }
@@ -163,6 +164,7 @@
 
                 <div class="field">
                     <input type="submit" class="btn" name="join" value="Join">
+                    <input type="button" class="btn" name="submit" value="Back" onclick="window.history.back()">
                 </div>
             </form>
         </div>
