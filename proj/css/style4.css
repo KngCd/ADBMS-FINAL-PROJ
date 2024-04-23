@@ -273,7 +273,6 @@ input:is(:focus, :valid) + .placeholder {
   color: var(--focus-color);
 }
 
-
 .card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
@@ -372,4 +371,22 @@ input:is(:focus, :valid) + .placeholder {
   transform: translate(-50%, -50%);
   color: white;
   font-size: 20px;
+}
+
+/*edit */
+.body-section .form{
+  height: 450px;
+}
+.card .btn{
+  background-color: transparent;
+  font-size: 10px;
+  margin-left: 230px;
+  margin-top: -4px;
+  cursor: pointer;
+  color: red;
+  width: 100px;
+  height: 100%;
+}
+.card .btn:hover{
+  text-decoration: underline;
 }
