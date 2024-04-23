@@ -27,7 +27,7 @@ session_start();
                     $username = $_POST['username'];
                     $email = $_POST['email'];
                     $address = $_POST['address'];
-                    $school = $_POST['school'];
+                    //$school = $_POST['school'];
                     $age = $_POST['age'];
                     $password = $_POST['password'];
                     $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -46,7 +46,7 @@ session_start();
                             $role = $_POST['role'];
                             if($role == "student"){
                                 // Insert user into the students table
-                                mysqli_query($con, "INSERT INTO users (Username, Email, Age, Password, School, Address) VALUES ('$username', '$email', '$age', '$hash','$school','$address')") or die("Error Occurred");
+                                mysqli_query($con, "INSERT INTO users (Username, Email, Age, Password, Address) VALUES ('$username', '$email', '$age', '$hash','$address')") or die("Error Occurred");
 
                                 $_SESSION['success'] = "Registration Successful! Please Login now.";
                                 header('Location: ' . $_SERVER['PHP_SELF']);
@@ -54,7 +54,7 @@ session_start();
                             }
                             elseif($role == "teacher"){
                                 // Insert user into the teachers table
-                                mysqli_query($con, "INSERT INTO teachers (Username, Email, Age, Password, School, Address) VALUES ('$username', '$email', '$age', '$hash','$school','$address')") or die("Error Occurred");
+                                mysqli_query($con, "INSERT INTO teachers (Username, Email, Age, Password, School, Address) VALUES ('$username', '$email', '$age', '$hash','$address')") or die("Error Occurred");
 
                                 $_SESSION['success'] = "Registration Successful! Please Login now.";
                                 header('Location: ' . $_SERVER['PHP_SELF']);
@@ -70,7 +70,6 @@ session_start();
                 <input type="email" placeholder="Email" name="email" id="email" autocomplete="off" oninput="this.value = this.value.toLowerCase();" required/>
 				<input type="number" placeholder="Age" name="age" id="age" autocomplete="off" required/>
 				<input type="text" placeholder="Address" name="address" id="address" autocomplete="off" required/>
-				<input type="text" placeholder="School" name="school" id="school" autocomplete="off" required/>
             
 				<div class="password-wrapper">
 					<i class="far fa-eye-slash" id="togglePassword"></i>
@@ -309,7 +308,7 @@ session_start();
 					<input type="radio" value="student" name="role" id="student" required><label for="student">Student</label>
 					<input type="radio" value="teacher" name="role" id="teacher" required><label for="teacher">Teacher</label>
                 </div>
-                <a href="reset_password.php">Forgot your password?</a>
+                <a class="forgot" href="reset_password.php">Forgot your password?</a>
 				<div class="field">
                     <input type="submit" class="btn" name="login_submit" value="Sign in">
                 </div>
