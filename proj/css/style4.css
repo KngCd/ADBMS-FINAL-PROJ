@@ -89,6 +89,7 @@ html, body{
     margin-left: -1px;
 }
 .fa-graduation-cap{margin-left: 15px;}
+.fa-square-plus{margin-left: 15px;}
   
   /* On mouse-over */
 .dropdown-btn:hover {
@@ -189,6 +190,10 @@ body.sidebar-open .container2 > * {
 .right-side button{
     border: none;
     background-color: white;
+    transition: opacity 0.2s ease;
+}
+.right-side button:hover{
+  opacity: 0.7;
 }
 /* create-subject eto hanggang duon bago sa may .card*/
 form {
@@ -389,4 +394,93 @@ input:is(:focus, :valid) + .placeholder {
 }
 .card .btn:hover{
   text-decoration: underline;
+}
+
+/*uploadinga*/
+.head{
+  width: 100%;
+  background-color: #0c3666;
+  margin-top: -10px;
+}
+.head h3, .head i{
+  color: #fff;
+  height: 30px;
+}
+.head h3{
+  width: 100%;
+  margin-left: 50px;
+  margin-top: -30px;  
+}
+.head i{
+  font-size: 20px;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+.upload form{
+  height: 100%;
+}
+.upload form .select{
+  margin-left: 10px;
+}
+.upload .subject{
+  margin-top: 20px;
+  margin-left: -100px;
+}
+.upload form .btn{
+  border-radius: 30px;
+  background: #0c3666;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  width: 100px;
+  height: 30px;
+  margin-top: 30px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.upload form .btn:hover{
+  opacity: 0.7;
+}
+.file{
+  margin-top: 30px;
+}
+.file label {
+  margin-right: -40px;
+  margin-left: 20px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.file input[type="file"] {
+  width: 100%; /* adjust the width to your liking */
+}
+
+.mod-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  margin-left: -50px;
+}
+
+.mod-container label {
+  display: inline-block;
+  width: 250px;
+  text-align: left;
+  margin-right: 10px;
+  vertical-align: top;
+}
+
+.mod-container input {
+  background: #eee;
+  padding: 12px 15px;
+  margin: 8px 0;
+  width: 350px;
+  box-sizing: border-box;
+  border: 1px solid #aaa; /* add a default border */
+}
+.mod:focus {
+  border: 1px solid #000; /* change the border color when the input is active */
 }
