@@ -54,7 +54,7 @@ session_start();
                             }
                             elseif($role == "teacher"){
                                 // Insert user into the teachers table
-                                mysqli_query($con, "INSERT INTO teachers (Username, Email, Age, Password, School, Address) VALUES ('$username', '$email', '$age', '$hash','$address')") or die("Error Occurred");
+                                mysqli_query($con, "INSERT INTO teachers (Username, Email, Age, Password, Address) VALUES ('$username', '$email', '$age', '$hash','$address')") or die("Error Occurred");
 
                                 $_SESSION['success'] = "Registration Successful! Please Login now.";
                                 header('Location: ' . $_SERVER['PHP_SELF']);
