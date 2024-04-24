@@ -101,7 +101,7 @@
                 $address = mysqli_real_escape_string($con, $_POST['address']);
 
                 // Update information on the database
-                $edit_query = mysqli_query($con, "UPDATE teachers SET Username='$username', Email='$email', Age='$age', Address='$address' WHERE Id=$id") or die("error occurred");
+                $edit_query = mysqli_query($con, "UPDATE users SET Username='$username', Email='$email', Age='$age', Address='$address' WHERE Id=$id") or die("error occurred");
 
                 if ($edit_query) {
                     $_SESSION['success'] = "Update Successful!";
