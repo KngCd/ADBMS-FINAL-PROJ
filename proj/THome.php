@@ -41,7 +41,16 @@
                   }
                   ?>
                 </div>
-            <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
+                <button class="dropdown-btn">
+                  <i class="fa-regular fa-square-plus"></i>
+                  <span>Add<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
+                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                </div>
+
             <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
             <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
