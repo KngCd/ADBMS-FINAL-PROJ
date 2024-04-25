@@ -45,7 +45,7 @@
                 </button>
                 <div class="dropdown-container">
                   <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
                   <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
                 </div>
             <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
@@ -105,80 +105,114 @@
 <div class="main-body">
     <div class="body-section2" id="main">
     <?php
-// Include the database configuration file
-require_once 'config.php';
+      // Include the database configuration file
+      require_once 'config.php';
 
-// Get document data from database
-$id = $_SESSION['id'];
-$subject = isset($_POST['subject']) ? mysqli_real_escape_string($con, $_POST['subject']) : '';
-$classcode = isset($_POST['classcode']) ? mysqli_real_escape_string($con, $_POST['classcode']) : '';
+      // Get document data from database
+      $id = $_SESSION['id'];
+      $subject = isset($_POST['subject']) ? mysqli_real_escape_string($con, $_POST['subject']) : '';
+      $classcode = isset($_POST['classcode']) ? mysqli_real_escape_string($con, $_POST['classcode']) : '';
 
-// Query the modules table
-$module_result = mysqli_query($con, "SELECT * FROM modules WHERE classcode = '$classcode' AND teacher_id = '$id' ORDER BY uploaded DESC");
+      // Query the modules table
+      $module_result = mysqli_query($con, "SELECT * FROM modules WHERE classcode = '$classcode' AND teacher_id = '$id' ORDER BY uploaded DESC");
 
-// Query the announcements table
-$announcement_result = mysqli_query($con, "SELECT * FROM announcement WHERE classcode = '$classcode' AND teacher_id = '$id' ORDER BY uploaded DESC");
+      // Query the announcements table
+      $announcement_result = mysqli_query($con, "SELECT * FROM announcement WHERE classcode = '$classcode' AND teacher_id = '$id' ORDER BY uploaded DESC");
 
-// Display documents with BLOB data from database
-if ($module_result->num_rows > 0 || $announcement_result->num_rows > 0) {
-    // Initialize an array to store the results
-    $results = array();
+      // Query the activity table
+      $activity_result = mysqli_query($con, "SELECT * FROM activity WHERE classcode = '$classcode' AND teacher_id = '$id' ORDER BY uploaded DESC");
 
-    // Add the modules to the results array
-    if ($module_result->num_rows > 0) {
-        while ($row = $module_result->fetch_assoc()) {
-            $row['type'] = 'module';
-            $results[] = $row;
-        }
-    }
+      // Display documents with BLOB data from database
+      if ($module_result->num_rows > 0 || $announcement_result->num_rows > 0 || $activity_result->num_rows > 0) {
+          // Initialize an array to store the results
+          $results = array();
 
-    // Add the announcements to the results array
-    if ($announcement_result->num_rows > 0) {
-        while ($row = $announcement_result->fetch_assoc()) {
-            $row['type'] = 'announcement';
-            $results[] = $row;
-        }
-    }
+          // Add the modules to the results array
+          if ($module_result->num_rows > 0) {
+              while ($row = $module_result->fetch_assoc()) {
+                  $row['type'] = 'module';
+                  $results[] = $row;
+              }
+          }
 
-    // Sort the results array by the uploaded column
-    usort($results, function($a, $b) {
-        return strtotime($b['uploaded']) - strtotime($a['uploaded']);
-    });
+          // Add the announcements to the results array
+          if ($announcement_result->num_rows > 0) {
+              while ($row = $announcement_result->fetch_assoc()) {
+                  $row['type'] = 'announcement';
+                  $results[] = $row;
+              }
+          }
 
-    // Display the results
-    foreach ($results as $row) {
-        if ($row['type'] === 'module') {
-            if ($row['filetype'] === 'pdf') {
-                // Display PDF document
-                echo '<div class="module-card">';
-                echo '<i class="fa-solid fa-book-bookmark"></i>';
-                echo '  <div class="module-name"> Module Name: '. $row['module_name'] . '</div>';
-                echo '  <div class="module-description"> Description: '. $row['description'] . '</div>';
-                echo '  <a href="#" class="view-pdf-link" onclick="viewPDF(\''. base64_encode($row['module']). '\', \''. $row['module_name'].'.pdf\')">View Learning Material</a>';
-                echo '</div>';
-            } elseif ($row['filetype'] === 'pptx' || $row['filetype'] === 'txt' || $row['filetype'] === 'xlsx' || $row['filetype'] === 'docx' || $row['filetype'] === 'doc') {
-                // Display a download link for the file if neither PDF nor text is uploaded
-                echo '<div class="module-card">';
-                echo '<i class="fa-solid fa-book-bookmark"></i>';
-                echo '  <div class="module-name"> Module Name: ' . $row['module_name'] . '</div>';
-                echo '  <div class="module-description"> Description: ' . $row['description'] .  '</div>';
-                echo '  <a class="view-pdf-link"  href="data:application/octet-stream;base64,'. base64_encode($row['module']) .'" download="'. $row['module_name'] .'.'. $row['filetype'] .'">Download Learning Material</a>';
-                echo '</div>';
+          // Add the activities to the results array
+          if ($activity_result->num_rows > 0) {
+              while ($row = $activity_result->fetch_assoc()) {
+                  $row['type'] = 'activity';
+                  $results[] = $row;
+              }
+          }
+
+          // Sort the results array by the uploaded column
+          usort($results, function($a, $b) {
+              return strtotime($b['uploaded']) - strtotime($a['uploaded']);
+          });
+
+          // Display the results
+          foreach ($results as $row) {
+              if ($row['type'] === 'module') {
+                  if ($row['filetype'] === 'pdf') {
+                      // Display PDF document
+                      echo '<div class="module-card">';
+                      echo '<i class="fa-solid fa-book-bookmark"></i>';
+                      echo '  <div class="module-name"> Module Name: '. $row['module_name'] . '</div>';
+                      echo '  <div class="module-description"> Description: '. $row['description'] . '</div>';
+                      echo '  <a href="#" class="view-pdf-link" onclick="viewPDF(\''. base64_encode($row['module']). '\', \''. $row['module_name'].'.pdf\')">View Learning Material</a>';
+                      echo '</div>';
+                  } elseif ($row['filetype'] === 'pptx' || $row['filetype'] === 'txt' || $row['filetype'] === 'xlsx' || $row['filetype'] === 'docx' || $row['filetype'] === 'doc') {
+                      // Display a download link for the file if neither PDF nor text is uploaded
+                      echo '<div class="module-card">';
+                      echo '<i class="fa-solid fa-book-bookmark"></i>';
+                      echo '  <div class="module-name"> Module Name: ' . $row['module_name'] . '</div>';
+                      echo '  <div class="module-description"> Description: ' . $row['description'] .  '</div>';
+                      echo '  <a class="view-pdf-link"  href="data:application/octet-stream;base64,'. base64_encode($row['module']) .'" download="'. $row['module_name'] .'.'. $row['filetype'] .'">Download Learning Material</a>';
+                      echo '</div>';
+                  }
+              } elseif ($row['type'] === 'announcement') {
+                  // Display announcement
+                  echo '<div class="module-card">';
+                  echo '<i class="fa-solid fa-bullhorn"></i>';
+                  echo '  <div class="module-name"> Title: ' . $row['title'] .  '</div>';
+                  echo '  <div class="module-description"> Description: ' . $row['description'] . '</div>';
+                  echo '  <div class="module-description">' . date('F j, Y', strtotime($row['uploaded'])) . '</div>';
+                  echo '</div>';
+              }
+              elseif ($row['type'] === 'activity') {
+                if ($row['filetype'] === 'pdf') {
+                    // Display PDF document for activity
+                    echo '<div class="module-card">';
+                    echo '<i class="fa-solid fa-clipboard-list"></i>';
+                    echo '  <div class="module-name"> Activity Name: '. $row['topic']. '</div>';
+                    echo '  <div class="module-description"> Description: '. $row['description']. '</div>';
+                    echo '  <div class="module-description"> Due Date: ' . $row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
+                    echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
+                    echo '  <a href="#" class="view-pdf-link" onclick="viewPDF(\''. base64_encode($row['activity']). '\', \''. $row['topic'].'.pdf\')">View Activity</a>';
+                    echo '</div>';
+                } elseif ($row['filetype'] === 'pptx' || $row['filetype'] === 'txt' || $row['filetype'] === 'xlsx' || $row['filetype'] === 'docx' || $row['filetype'] === 'doc') {
+                    // Display a download link for the file if neither PDF nor text is uploaded for activity
+                    echo '<div class="module-card">';
+                    echo '<i class="fa-solid fa-clipboard-list"></i>';
+                    echo '  <div class="module-name"> Activity Name: '. $row['topic']. '</div>';
+                    echo '  <div class="module-description"> Description: '. $row['description'].  '</div>';
+                    echo '  <div class="module-description"> Due Date: ' . $row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
+                    echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
+                    echo '  <a class="view-pdf-link"  href="data:application/octet-stream;base64,'. base64_encode($row['activity']).'" download="'. $row['topic'].'.'. $row['filetype'].'">Download Activity</a>';
+                    echo '</div>';
+                }
             }
-        } elseif ($row['type'] === 'announcement') {
-            // Display announcement
-            echo '<div class="module-card">';
-            echo '<i class="fa-solid fa-bullhorn"></i>';
-            echo '  <div class="module-name"> Title: ' . $row['title'] .  '</div>';
-            echo '  <div class="module-description"> Description: ' . $row['description'] . '</div>';
-            echo '  <div class="module-description">' . date('F j, Y', strtotime($row['uploaded'])) . '</div>';
-            echo '</div>';
-        }
-    }
-} else {
-    echo '<p class="status error" style="color: #aaa;">No posts yet!</p>';
-}
-?>
+          }
+      } else {
+          echo '<p class="status error" style="color: #aaa;">No posts yet!</p>';
+      }
+      ?>
 
     </div>
             <script>
