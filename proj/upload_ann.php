@@ -47,7 +47,7 @@
                 </button>
                 <div class="dropdown-container">
                   <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
                   <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
                 </div>
 
