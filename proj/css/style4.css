@@ -433,12 +433,13 @@ input:is(:focus, :valid) + .placeholder {
   font-size: 12px;
   font-weight: bold;
   width: 100px;
-  height: 30px;
+  height: 40px;
   margin-top: 30px;
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: opacity 0.2s ease;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .upload form .btn:hover{
@@ -483,4 +484,65 @@ input:is(:focus, :valid) + .placeholder {
 }
 .mod:focus {
   border: 1px solid #000; /* change the border color when the input is active */
+}
+
+/*stream*/
+.main-body{
+  width: 100%;
+  display: flex;
+  align-items: flex-end; /* align items to the bottom */
+  justify-content: center;
+}
+
+.body-section2 {
+  width: 500px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* align content to the bottom */
+  align-items: flex-start; /* align items to the left */
+  border: 2px solid #0c3666;
+  border-radius: 10px;
+  margin-top: 30px;
+  padding: 20px; /* add padding to the left and right */
+}
+
+.module-card {
+  border: 1px solid #ddd;
+  width: 100%;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.module-card i {
+  font-size: 20px;
+  align-self: flex-start; /* align the i tag to the flex baseline */
+  margin-right: 8px;
+}
+
+.module-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  margin-left: 30px;
+  margin-top: -20px;
+}
+
+.module-description {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.view-pdf-link {
+  font-size: 14px;
+  color: #0077cc;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: auto;
+}
+
+.view-pdf-link:hover {
+  text-decoration: underline;
 }
