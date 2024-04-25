@@ -485,6 +485,28 @@ input:is(:focus, :valid) + .placeholder {
 .mod:focus {
   border: 1px solid #000; /* change the border color when the input is active */
 }
+.mod-container .mod-p {
+  background: #eee;
+  padding: 12px 15px;
+  margin: 8px 0;
+  width: 100px;
+  box-sizing: border-box;
+  border: 1px solid #aaa; /* add a default border */
+}
+.mod:focus {
+  border: 1px solid #000; /* change the border color when the input is active */
+}
+.mod-container .mod-d {
+  background: #eee;
+  padding: 12px 15px;
+  margin: 8px 0;
+  width: 250px;
+  box-sizing: border-box;
+  border: 1px solid #aaa; /* add a default border */
+}
+.mod:focus {
+  border: 1px solid #000; /* change the border color when the input is active */
+}
 
 /*stream*/
 .main-body{
