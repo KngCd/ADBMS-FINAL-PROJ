@@ -46,9 +46,9 @@
                   <span>Add<i class="fa fa-caret-down"></i></span>
                 </button>
                 <div class="dropdown-container">
-                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Module</a>
+                  <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
                 </div>
 
             <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
@@ -201,66 +201,13 @@
                       <label for="input">Description:</label>
                       <input class="mod" type="text" placeholder="Description" name="desc" autocomplete="off" required />
                     </div>
-                    <input type="submit" name="submit" class="btn" value="Upload">
+                    <div class="field">
+                        <input type="submit" name="submit" class="btn" value="Upload">
+                        <input type="button" class="btn" name="submit" value="Back" onclick="window.history.back()">
+                    </div>
                 </form>
                 <?php } ?>
     </div>
 
 </body>
-<?php
-if (isset($_SESSION['success'])) {
-        echo "
-        <div id='success-dialog' title='Successful' style='display: none; text-align:center; font-size: 15px;'>
-            <p>{$_SESSION['success']}</p><br>
-            <p>Click 'OK' to close this message.</p><br>
-        </div>
-        <script>
-            $(document).ready(function() {
-                $(\"#success-dialog\").dialog({
-                    modal: true,
-                    width: 400,
-                    resizable: false,
-                    draggable: false,
-                    dialogClass: 'ui-dialog-success',
-                    buttons: {
-                        'OK': function() {
-                            $( this ).dialog( 'close' );
-                        }
-                    }
-                });
-            });
-        </script>
-        <style>
-        .ui-dialog-success .ui-dialog-titlebar-close {
-            display: none;
-        }
-        .ui-dialog-success .ui-dialog-titlebar {
-            background-color: green;
-            color: #fff;
-            padding: 5px;
-            font-size: 15px;
-            font-weight: lighter;
-        }
-        .ui-dialog-success .ui-dialog-buttonset button {
-            font-size: 18px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #0c3666;
-            color: #fff;
-            border: none;
-        }
-        .ui-dialog-success .ui-dialog-buttonset button:hover {
-            opacity: 0.8;
-            cursor: pointer;
-        }
-        .ui-dialog-success .ui-dialog-buttonset button:active {
-            opacity: 0.8;
-        }
-        .ui-dialog-buttonpane {
-            padding: 10px 20px;
-            margin: 10px 0px;
-        }
-        </style>";
-        unset($_SESSION['success']);
-    } ?>
 </html>
