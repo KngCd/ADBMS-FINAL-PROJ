@@ -90,6 +90,7 @@ html, body{
 }
 .fa-graduation-cap{margin-left: 15px;}
 .fa-square-plus{margin-left: 15px;}
+.fa-list-check{margin-left: 15px;}
   
   /* On mouse-over */
 .dropdown-btn:hover {
@@ -342,6 +343,8 @@ input:is(:focus, :valid) + .placeholder {
   font-size: 20px;
   color: #aaa;
 }
+.fa-arrow-up-from-bracket{color: black; font-size: 20px; position: absolute; cursor: pointer; transition: all 100ms ease-in-out;}
+.fa-arrow-up-from-bracket:hover{font-size: 25px;}
 
 .input-container .btn-2{
   border-radius: 35px;
@@ -474,6 +477,14 @@ input:is(:focus, :valid) + .placeholder {
   vertical-align: top;
 }
 
+.mod-container .label {
+  display: inline-block;
+  width: 100%;
+  text-align: left;
+  margin-left: 35px;
+  vertical-align: top;
+}
+
 .mod-container input {
   background: #eee;
   padding: 12px 15px;
@@ -538,12 +549,23 @@ input:is(:focus, :valid) + .placeholder {
   display: flex;
   flex-direction: column;
 }
+
 .module-card i {
   font-size: 20px;
   align-self: flex-start; /* align the i tag to the flex baseline */
   margin-right: 8px;
 }
-
+.module-card .form{
+  width: 0;
+  height: 0;
+  margin-top: -20px;
+  border-color: white;
+}
+.module-card .form a{
+  width: 50px;
+  margin-left: 400px;
+  margin-top: -25px;
+}
 .module-name {
   font-size: 20px;
   font-weight: bold;
@@ -556,9 +578,15 @@ input:is(:focus, :valid) + .placeholder {
   font-size: 14px;
   margin-bottom: 16px;
 }
+.module-description1 {
+  font-size: 14px;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
 
 .view-pdf-link {
   font-size: 14px;
+  width: 250px;
   color: #0077cc;
   text-decoration: none;
   display: inline-block;
