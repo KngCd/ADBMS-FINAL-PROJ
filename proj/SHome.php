@@ -19,7 +19,7 @@
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Class<i class="fa fa-caret-down"></i></span>
@@ -41,7 +41,28 @@
                   }
                   ?>
                 </div>
-            <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
+                <button class="dropdown-btn">
+                   <i class="fa-solid fa-list-check"></i>
+                  <span>To-Do<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                <?php 
+                  include('config.php');
+                  $id = $_SESSION['id'];
+      
+                  // Fetch the pending activities by the student from the database
+                  $query = mysqli_query($con, "SELECT c.classcode, cs.classcode, cs.student_id, ac.act_id, ac.activity, ac.topic, ac.description, ac.points,
+                  ac.due_date, ac.time, ac.filetype, ac.uploaded, ac.classcode, ac.teacher_id FROM class_student cs JOIN class c ON cs.classcode = c.classcode
+                  JOIN activity ac ON c.classcode = ac.classcode WHERE cs.student_id = '$id'");
+                  $result = mysqli_num_rows($query);
+
+                  // Loop through the classes and create a link for each class
+                  for ($i = 0; $i < $result; $i++) {
+                    $class = mysqli_fetch_assoc($query);
+                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['topic'] . ' / '.  $class['due_date'] . '</a>';
+                  }
+                  ?>
+                </div>
             <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
             <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
@@ -106,7 +127,29 @@
         <div class="container" data-color="">
         <input type="submit" class="btn" data-classcode="<?php echo $row['classcode']; ?>" value="Unenroll">
           <p><?php echo $row['Username']; ?></p><br>
-          <h4><b><?php echo $row['subject']; ?></b></h4> <i class="fa-solid fa-circle-arrow-right"></i>
+          <h4><b><?php echo $row['subject']; ?></b></h4> 
+          <form action="student-stream.php" method="post" class="form" id="class-stream-form-<?php echo $row['classcode']; ?>">
+              <input type="hidden" name="subject" value="<?php echo $row['subject']; ?>">
+              <input type="hidden" name="classcode" value="<?php echo $row['classcode']; ?>">
+              <a href="#" class="submit-button" data-form-id="class-stream-form-<?php echo $row['classcode']; ?>">
+                <i class="fa-solid fa-circle-arrow-right"></i>
+              </a>
+            </form>
+            <script>
+            $(document).ready(function() {
+              $('.submit-button').click(function(e) {
+                e.preventDefault();
+
+                var formId = $(this).data('form-id');
+                $('#' + formId).submit();
+
+                // Redirect to the next page
+                setTimeout(function() {
+                  window.location.href = "student-stream.php";
+                }, 100);
+              });
+            });
+              </script>
         </div>
       </div>
       <script>
