@@ -1,13 +1,19 @@
 <?php
-    session_start();
+session_start();
 
-    // Unset all session variables
-    $_SESSION = array();
+include ('config.php');
 
-    // Destroy the session
-    session_destroy();
+// Insert the logout timestamp
+$logout_timestamp = date('Y-m-d H:i:s');
+$user_id = $_SESSION['id'];
+$query = "INSERT INTO logout_log (user_id, logout_time) VALUES (?, NOW())";
+$stmt = $con->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
 
-    // Redirect to login page
-    header("Location: home.php");
-    exit();
+// Clear the session variables and redirect to the login page
+session_unset();
+session_destroy();
+header("Location: LoginSignup.php");
+exit();
 ?>

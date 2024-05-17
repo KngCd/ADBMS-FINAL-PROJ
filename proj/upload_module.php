@@ -19,7 +19,8 @@
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="THome.php"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="schedule_t.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Class<i class="fa fa-caret-down"></i></span>
@@ -49,9 +50,10 @@
                   <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Module</a>
                   <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
                   <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
                 </div>
 
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
+                <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
             <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
@@ -90,12 +92,15 @@
           </div>
 
     <div class="right-side">
-      <button>
+    <button onclick="location.href='create-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
-      <button>
+      <button onclick="location.href='Tedit.php'">
             <i class="fa-solid fa-user"></i>
         </button>
+        <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 
@@ -115,6 +120,7 @@
           $moduleName = $_POST['module_name'];
           $description = $_POST['desc'];
           $subject = $_POST['subject'];
+          $section = $_POST['section'];
         
           // Allow certain file formats
           $allowTypes = array('pdf', 'doc', 'docx', 'txt','pptx', 'xlsx');
@@ -126,13 +132,13 @@
               $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         
               // Fetch the class ID based on the selected subject name
-              $query = mysqli_query($con, "SELECT classcode FROM class WHERE subject = '$subject' AND teacher_id = '$id'");
+              $query = mysqli_query($con, "SELECT classcode FROM class WHERE subject = '$subject' AND section = '$section' AND teacher_id = '$id'");
               $classcodeRow = mysqli_fetch_assoc($query);
         
               // Check if a row was returned from the query
               if (!$classcodeRow) {
                   $status = 'error';
-                  $statusMsg = "The selected subject does not exist for this teacher.";
+                  echo "<script>alert('The selected subject or section does not exist for this teacher! Please Try Again.'); window.location.href='THome.php';</script>";
               } else {
                   // Extract the classcode value from the result
                   $classcode = $classcodeRow['classcode'];
@@ -143,19 +149,16 @@
         
                   // Execute the statement and check for success
                   if ($stmt->execute()) {
-                    $_SESSION['success'] = "Upload Successful!";
                     echo "<script>alert('Upload Successful!'); window.location.href='THome.php';</script>";
                   } else {
-                      $status = 'error';
-                      $statusMsg = "Document upload failed, please try again.";
+                    echo "<script>alert('Uploading Failed!'); window.location.href='THome.php';</script>";
                   }
         
                   // Close the statement
                   $stmt->close();
               }
           } else {
-              $status = 'error';
-              $statusMsg = 'Sorry, only PDF, DOC, DOCX, & TXT files are allowed to upload.';
+            echo "<script>alert('Sorry, only PDF, DOC, DOCX, & TXT files are allowed to upload!'); window.location.href='THome.php';</script>";
           }
         }
 
@@ -179,7 +182,7 @@
                             $id = $_SESSION['id'];
 
                             // Fetch the classes created by the teacher from the database
-                            $query = mysqli_query($con, "SELECT subject FROM class WHERE teacher_id = '$id'");
+                            $query = mysqli_query($con, "SELECT DISTINCT subject FROM class WHERE teacher_id = '$id'");
                             $result = mysqli_num_rows($query);
 
                             // Loop through the classes and create an option for each class
@@ -195,6 +198,9 @@
                           <input type="file" name="document" accept=".pdf,.doc,.docx,.txt,.pptx,.xlsx" required>
                     </div>
                     <div class="mod-container">
+                      <label for="input">Section:</label>
+                      <input class="mod" type="text" placeholder="Section" name="section" autocomplete="off" required />
+
                       <label for="input">Title:</label>
                       <input class="mod" type="text" placeholder="Module Name" name="module_name" autocomplete="off" required />
 

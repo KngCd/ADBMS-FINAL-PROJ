@@ -18,9 +18,10 @@
   <div class="header">
         <div class="left-side">
           <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="THome.php"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="schedule_t.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Class<i class="fa fa-caret-down"></i></span>
@@ -47,8 +48,10 @@
                   <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
                   <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
                   <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
                 </div>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+            <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
+            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -93,12 +96,15 @@
           </script>
 
     <div class="right-side">
-      <button onclick="location.href='create-subject.php'">
+    <button onclick="location.href='create-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
       <button onclick="location.href='Tedit.php'">
             <i class="fa-solid fa-user"></i>
         </button>
+        <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 
@@ -194,7 +200,18 @@
                     echo '  <div class="module-description"> Description: '. $row['description']. '</div>';
                     echo '  <div class="module-description"> Due Date: ' . $row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
                     echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
+
+                    echo '<form action="view-acts.php" method="post" class="form" id="class-stream-form-' . $row['classcode'] . '">';
+                    echo '   <input type="hidden" name="classcode" value="' . $row['classcode'] . '">';
+                    echo '   <input type="hidden" name="act_id" value="' . $row['act_id'] . '">';
+                    echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="' . $row['act_id'] . '">';
+                    echo '       <i class="fa-solid fa-file-import"></i>';
+                    echo '   </a>';
+                    echo '</form>';
+                    
+                           
                     echo '  <a href="#" class="view-pdf-link" onclick="viewPDF(\''. base64_encode($row['activity']). '\', \''. $row['topic'].'.pdf\')">View Activity</a>';
+
                     echo '</div>';
                 } elseif ($row['filetype'] === 'pptx' || $row['filetype'] === 'txt' || $row['filetype'] === 'xlsx' || $row['filetype'] === 'docx' || $row['filetype'] === 'doc') {
                     // Display a download link for the file if neither PDF nor text is uploaded for activity
@@ -204,17 +221,46 @@
                     echo '  <div class="module-description"> Description: '. $row['description'].  '</div>';
                     echo '  <div class="module-description"> Due Date: ' . $row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
                     echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
+
+                    echo '<form action="view-acts.php" method="post" class="form" id="class-stream-form-' . $row['classcode'] . '">';
+                    echo '   <input type="hidden" name="classcode" value="' . $row['classcode'] . '">';
+                    echo '   <input type="hidden" name="act_id" value="' . $row['act_id'] . '">';
+                    echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="' . $row['act_id'] . '">';
+                    echo '       <i class="fa-solid fa-file-import"></i>';
+                    echo '   </a>';
+                    echo '</form>';
+
                     echo '  <a class="view-pdf-link"  href="data:application/octet-stream;base64,'. base64_encode($row['activity']).'" download="'. $row['topic'].'.'. $row['filetype'].'">Download Activity</a>';
                     echo '</div>';
                 }
             }
           }
       } else {
-          echo '<p class="status error" style="color: #aaa;">No posts yet!</p>';
+          echo '<p class="status error" style="color: #aaa; width:100%; text-align: center;">No posts yet!</p>';
       }
       ?>
 
     </div>
+    <script>
+  $(document).ready(function() {
+    $('.submit-button').click(function(e) {
+      e.preventDefault();
+
+      var formId = $(this).data('form-id');
+      var actId = $(this).data('act-id');
+
+      // Set the act_id value in the form
+      $('#' + formId + ' [name="act_id"]').val(actId);
+
+      $('#' + formId).submit();
+
+      // Redirect to the next page
+      setTimeout(function() {
+        window.location.href = "view-acts.php";
+      }, 100);
+    });
+  });
+</script>
             <script>
               function viewPDF(data, filename) {
                 // Create a Blob object from the base64-encoded PDF data
@@ -252,7 +298,37 @@
 </html>
 
 <?php
-/*
+/*    BACK-UPS
+        // Query the activity table for the row with the matching act_id
+        $query = mysqli_query($con, "SELECT c.subject, c.classcode, c.teacher_id, cs.student_id, u.Username, ac.act_id,
+        ac.topic, ac.points, ac.classcode, ac.due_date, ac.time, ac.teacher_id, al.student_id, al.file, al.filetype, al.comment, al.uploaded
+        FROM class_student cs
+        JOIN class c ON cs.classcode = c.classcode
+        JOIN users u ON cs.student_id = u.Id
+        JOIN activity ac ON c.classcode = ac.classcode
+        JOIN activitylog al ON cs.student_id = al.student_id AND ac.act_id = al.activity_id
+        WHERE ac.act_id = '$act_id' AND c.teacher_id = '$id'
+        ORDER BY al.uploaded ASC");
+
+
+     $module_result = mysqli_query($con, "SELECT u.Id, c.classcode, cs.classcode, cs.student_id, m.module_name, m.module,m.description,m.filetype,
+       m.uploaded, m.classcode, m.teacher_id FROM users u JOIN class_student cs ON u.Id = cs.student_id
+       JOIN class c ON cs.classcode = c.classcode JOIN modules m ON c.classcode = m.classcode
+       WHERE c.classcode = '$classcode' AND cs.student_id = '$id' ORDER BY uploaded DESC");
+
+            // Query the announcements table
+     $announcement_result = mysqli_query($con, "SELECT u.Id, c.classcode, cs.classcode, cs.student_id, a.title, a.description,
+     a.uploaded, a.classcode, a.teacher_id FROM users u JOIN class_student cs ON u.Id = cs.student_id
+     JOIN class c ON cs.classcode = c.classcode JOIN announcement a ON c.classcode = a.classcode
+     WHERE c.classcode = '$classcode' AND cs.student_id = '$id' ORDER BY uploaded DESC");
+
+     // Query the activity table
+     $activity_result = mysqli_query($con, "SELECT u.Id, c.classcode, cs.classcode, cs.student_id, ac.activity, ac.topic, ac.description, ac.points,
+     ac.due_date, ac.time, ac.filetype, ac.uploaded, ac.classcode, ac.teacher_id FROM users u JOIN class_student cs ON u.Id = cs.student_id
+     JOIN class c ON cs.classcode = c.classcode JOIN activity ac ON c.classcode = ac.classcode
+     WHERE c.classcode = '$classcode' AND cs.student_id = '$id' ORDER BY uploaded DESC");
+
+     
         // Include the database configuration file
         require_once 'config.php';
 

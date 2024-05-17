@@ -94,7 +94,8 @@ session_start();
                     </div>
             
                     <div class="field">
-                        <input type="submit" class="btn" name="submit" value="Submit">
+                        <input type="submit" class="btn-2" name="submit" value="Submit">
+                        <input type="button" class="btn-2" name="submit" value="Back" onclick="window.history.back()">
                     </div>
                 </form>
                 <?php } ?>

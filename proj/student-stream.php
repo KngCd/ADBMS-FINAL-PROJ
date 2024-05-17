@@ -18,25 +18,30 @@
   <div class="header">
         <div class="left-side">
           <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="SHome.php"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="schedule_s.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar_s.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
-              <span>Class<i class="fa fa-caret-down"></i></span>
+              <span>Enrolled<i class="fa fa-caret-down"></i></span>
             </button>
             <div class="dropdown-container">
             <?php 
                   session_start();
                   include('config.php');
                   $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
       
                   // Fetch the classes created by the teacher from the database
-                  $query = mysqli_query($con, "SELECT subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode WHERE student_id = '$id'");
-                  $subject = $_POST['subject'];
-                  $classcode = $_POST['classcode'];
-
-                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $subject . '</a>';
+                  $query = mysqli_query($con, "SELECT subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode WHERE cs.student_id = '$id' 
+                  AND c.classcode = '$classcode'");
+                  $result = mysqli_num_rows($query);
+                  $row = mysqli_fetch_assoc($query);
+          
+                  if (isset($row)) {
+                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $row['subject'] . '</a>';
+                  }
                   ?>
                 </div>
                 <button class="dropdown-btn">
@@ -44,12 +49,61 @@
                   <span>To-Do<i class="fa fa-caret-down"></i></span>
                 </button>
                 <div class="dropdown-container">
-                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                <?php 
+                  include('config.php');
+                  $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
+
+                  // Fetch the pending activities by the student from the database
+                  $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, ac.act_id, ac.activity, ac.topic, ac.classcode, ac.teacher_id
+                  FROM class_student cs
+                  JOIN class c ON cs.classcode = c.classcode 
+                  JOIN activity ac ON c.classcode = ac.classcode
+                  LEFT JOIN activitylog al ON ac.act_id = al.activity_id AND al.student_id = $id
+                  WHERE cs.student_id = $id AND (al.activity_id IS NULL OR al.student_id IS NULL)");
+                  $result = mysqli_num_rows($query);
+
+                  if ($result == 0) {
+                      echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Activities yet!' . '</a>';
+                  } else {
+                      // Loop through the classes and create a link for each class
+                      for ($i = 0; $i < $result; $i++) {
+                          $class = mysqli_fetch_assoc($query);
+                          echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['topic'] . ' / '.'<b>' . $class['subject'] . '</b>'. '</a>';
+                      }
+                  }
+              ?>
                 </div>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
-            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
+                <button class="dropdown-btn">
+                 <i class="fa-regular fa-handshake"></i>
+                  <span>Meeting-Links<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                <?php 
+                include('config.php');
+                $id = $_SESSION['id'];
+
+                // Fetch the pending activities by the student from the database
+                $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, m.link, m.classcode, m.teacher_id
+                FROM class_student cs
+                JOIN class c ON cs.classcode = c.classcode
+                JOIN meetings m ON c.classcode = m.classcode AND c.teacher_id = m.teacher_id
+                WHERE cs.student_id = $id");
+                $result = mysqli_num_rows($query);
+
+                if ($result == 0) {
+                  echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Meetings yet!' . '</a>';
+              } else {
+                // Loop through the classes and create a link for each class
+                for ($i = 0; $i < $result; $i++) {
+                  $class = mysqli_fetch_assoc($query);
+                  $link = $class['link']; // Fetch the link from the database
+                  echo '<a class="link2" href="' . $link . '" target="_blank"><i class="fa-solid fa-link"></i>'. '- '.'<b>' . $class['subject'] . '</b>' . '</a>';
+                }
+              }
+                ?>
+                </div> <br><br><br><br>
+            <a class="link" href="logout.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -99,6 +153,9 @@
       </button>
       <button onclick="location.href='Sedit.php'">
             <i class="fa-solid fa-user"></i>
+      </button>
+      <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
       </button>
       </div>
     </div>
@@ -200,16 +257,42 @@
                    echo '  <div class="module-name"> Activity Name: '. $row['topic']. '</div>';
                    echo '  <div class="module-description"> Description: '. $row['description']. '</div>';
                    echo '  <div class="module-description1"> Due Date: ' .$row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
-                   echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
+
+                   $sql = mysqli_query($con, "SELECT ag.grades FROM activitygrade ag
+                   JOIN users u ON ag.student_id = u.Id  
+                   WHERE ag.act_id = $row[act_id] AND u.Id = $row[student_id]");
+                   $result = mysqli_fetch_assoc($sql);          
+
+                   if ($result !== null) {
+                    $grade = $result['grades'];
+                    echo '  <div class="module-description"> Points: '. $grade .' / ' . $row['points']. '</div>';
+                  } else {
+                    echo '  <div class="module-description"> Points: No Grades Yet'. ' / ' . $row['points']. '</div>';
+                   }
                   
-                   echo '<form action="turn-in-act.php" method="post" class="form" id="class-stream-form-' . $row['classcode'] . '">';
-                   echo '   <input type="hidden" name="classcode" value="' . $row['classcode'] . '">';
-                   echo '   <input type="hidden" name="act_id" value="' . $row['act_id'] . '">';
-                   echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '">';
-                   echo '       <i class="fa-solid fa-arrow-up-from-bracket"></i>';
-                   echo '   </a>';
-                   echo '</form>';
+                   $query = "SELECT * FROM activitylog WHERE activity_id = $row[act_id] AND student_id = $row[student_id] AND classcode = '$classcode'";
+                   $result = mysqli_query($con, $query);
+                   $activitylog_entry = mysqli_fetch_assoc($result);
                    
+                   if ($activitylog_entry) {
+                       // Display the form to unsubmit the activity
+                       echo '<form action="unsubmit.php" method="post" class="form" id="class-stream-form-'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="classcode" value="'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="act_id" value="'. $row['act_id']. '">';
+                       echo '   <a href="#" class="submit-button unsubmit" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="'. $row['act_id']. '">';
+                       echo '       <button class="button">Unsubmit</button>';
+                       echo '   </a>';
+                       echo '</form>';
+                   } else {
+                       // Display the form to submit the activity
+                       echo '<form action="turn-in-act.php" method="post" class="form" id="class-stream-form-'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="classcode" value="'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="act_id" value="'. $row['act_id']. '">';
+                       echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="'. $row['act_id']. '">';
+                       echo '       <i class="fa-solid fa-arrow-up-from-bracket"></i>';
+                       echo '   </a>';
+                       echo '</form>';
+                   }         
                    echo '  <a href="#" class="view-pdf-link" onclick="viewPDF(\''. base64_encode($row['activity']). '\', \''. $row['topic'].'.pdf\')">View Activity</a>';
                    echo '</div>';
                } elseif ($row['filetype'] === 'pptx' || $row['filetype'] === 'txt' || $row['filetype'] === 'xlsx' || $row['filetype'] === 'docx' || $row['filetype'] === 'doc') {
@@ -219,16 +302,42 @@
                    echo '  <div class="module-name"> Activity Name: '. $row['topic']. '</div>';
                    echo '  <div class="module-description"> Description: '. $row['description'].  '</div>';
                    echo '  <div class="module-description"> Due Date: ' . $row['due_date'] . '/'. date('g:i A', strtotime($row['time'])) . '</div>';
-                   echo '  <div class="module-description"> Points: '. $row['points']. '</div>';
                    
-                   echo '<form action="turn-in-act.php" method="post" class="form" id="class-stream-form-' . $row['classcode'] . '">';
-                   echo '   <input type="hidden" name="classcode" value="' . $row['classcode'] . '">';
-                   echo '   <input type="hidden" name="act_id" value="' . $row['act_id'] . '">';
-                   echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '">';
-                   echo '       <i class="fa-solid fa-arrow-up-from-bracket"></i>';
-                   echo '   </a>';
-                   echo '</form>';
+                   $sql = mysqli_query($con, "SELECT ag.grades FROM activitygrade ag
+                   JOIN users u ON ag.student_id = u.Id  
+                   WHERE ag.act_id = $row[act_id] AND u.Id = $row[student_id]");
+                   $result = mysqli_fetch_assoc($sql);
 
+                   if ($result !== null) {
+                    $grade = $result['grades'];
+                    echo '  <div class="module-description"> Points: '. $grade .' / ' . $row['points']. '</div>';
+                    } else {
+                    echo '  <div class="module-description"> Points: No Grades Yet'. ' / ' . $row['points']. '</div>';
+                   }
+                   
+                   $query = "SELECT * FROM activitylog WHERE activity_id = $row[act_id] AND student_id = $row[student_id] AND classcode = '$classcode'";
+                   $result = mysqli_query($con, $query);
+                   $activitylog_entry = mysqli_fetch_assoc($result);
+                   
+                   if ($activitylog_entry) {
+                       // Display the form to unsubmit the activity
+                       echo '<form action="unsubmit.php" method="post" class="form" id="class-stream-form-'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="classcode" value="'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="act_id" value="'. $row['act_id']. '">';
+                       echo '   <a href="#" class="submit-button unsubmit" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="'. $row['act_id']. '">';
+                       echo '       <button class="button">Unsubmit</button>';
+                       echo '   </a>';
+                       echo '</form>';
+                   } else {
+                       // Display the form to submit the activity
+                       echo '<form action="turn-in-act.php" method="post" class="form" id="class-stream-form-'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="classcode" value="'. $row['classcode']. '">';
+                       echo '   <input type="hidden" name="act_id" value="'. $row['act_id']. '">';
+                       echo '   <a href="#" class="submit-button" data-form-id="class-stream-form-'. $row['classcode']. '" data-act-id="'. $row['act_id']. '">';
+                       echo '       <i class="fa-solid fa-arrow-up-from-bracket"></i>';
+                       echo '   </a>';
+                       echo '</form>';
+                   }
                    echo '  <a class="view-pdf-link"  href="data:application/octet-stream;base64,'. base64_encode($row['activity']).'" download="'. $row['topic'].'.'. $row['filetype'].'">Download Activity</a>';
                    echo '</div>';
                }
@@ -241,21 +350,39 @@
       ?>
 
     </div>
-       <script>
-            $(document).ready(function() {
-              $('.submit-button').click(function(e) {
-                e.preventDefault();
+    <script>
+      $(document).ready(function() {
+        $('.submit-button').click(function(e) {
+          e.preventDefault();
 
-                var formId = $(this).data('form-id');
-                $('#' + formId).submit();
+          var formId = $(this).data('form-id');
+          var actId = $(this).data('act-id');
 
-                // Redirect to the next page
-                setTimeout(function() {
-                  window.location.href = "turn-in-act.php";
-                }, 100);
-              });
-            });
-              </script>
+          // Set the act_id value in the form
+          $('#' + formId + ' [name="act_id"]').val(actId);
+
+          $('#' + formId).submit();
+
+          // Redirect to the next page
+          setTimeout(function() {
+            window.location.href = "turn-in-act.php";
+          }, 100);
+        });
+
+        $(document).ready(function() {
+            $(".submit-button.unsubmit").click(function(e) {
+            e.preventDefault();
+          var formId = $(this).data("form-id");
+          var actId = $(this).data("act-id");
+          $("#" + formId + '[name="act_id"]').val(actId);
+          $("#" + formId).submit();
+          setTimeout(function() {
+          window.location.href = "unsubmit.php";
+        }, 100);
+        });
+          });
+      });
+      </script>
             <script>
               function viewPDF(data, filename) {
                 // Create a Blob object from the base64-encoded PDF data

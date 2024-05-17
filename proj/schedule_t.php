@@ -10,16 +10,17 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <title>Task Mastery</title>
 </head>
 <body>
 
   <div class="header">
-          <div class="left-side">
+        <div class="left-side">
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="THome.php"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="schedule_t.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="#"><i class="fa-regular fa-clock"></i>Schedule</a>
             <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
@@ -49,17 +50,17 @@
                 <div class="dropdown-container">
                   <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
                   <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
                   <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
                 </div>
-
-                <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
+            <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
             <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
           <i  id="school-icon" class="fa-solid fa-book-open"></i>
-          <p>Task Mastery</p>
+          <a class="tm" href="THome.php"><p>Task Mastery</p> </a>
+            </div>
           <script>
             function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
@@ -89,7 +90,6 @@
             });
           }
           </script>
-          </div>
 
     <div class="right-side">
     <button onclick="location.href='create-subject.php'">
@@ -103,97 +103,87 @@
       </button>
       </div>
     </div>
-
-    <?php
-
-        // Include the database configuration file
-        require_once 'config.php';
-
-        // If file upload form is submitted
-        if (isset($_POST["submit"])) {
-        
-          // Get the module name and description
-          $title = $_POST['title'];
-          $description = $_POST['desc'];
-          $subject = $_POST['subject'];
-          $section = $_POST['section'];
-         
-          // Fetch the class ID based on the selected subject name
-          $query = mysqli_query($con, "SELECT classcode FROM class WHERE subject = '$subject' AND section = '$section' AND teacher_id = '$id'");
-          $classcodeRow = mysqli_fetch_assoc($query);
-        
-          // Check if a row was returned from the query
-          if (!$classcodeRow) {
-                  $status = 'error';
-                  echo "<script>alert('The selected subject or section does not exist for this teacher! Please Try Again.'); window.location.href='THome.php';</script>";
-              } else {
-                  // Extract the classcode value from the result
-                  $classcode = $classcodeRow['classcode'];
-        
-                  // Prepare the SQL statement with placeholders for the document content, file type, module name, and description
-                  $stmt = $con->prepare("INSERT INTO announcement (title, description, uploaded, classcode, teacher_id) VALUES (?,?, NOW(), ?, ?)");
-                  $stmt->bind_param("ssss", $title, $description, $classcode, $id);
-        
-                  // Execute the statement and check for success
-                  if ($stmt->execute()) {
-                    echo "<script>alert('Creation Successful!'); window.location.href='THome.php';</script>";
-                  } else {
-                    echo "<script>alert('Uploading Failed!'); window.location.href='THome.php';</script>";
-                  }
-        
-                  // Close the statement
-                  $stmt->close();
-              }
-        }
-
-      else{
-    ?>
-
-    <div class="upload" id="main">
-  
-                <form class="form" action="" method="post" enctype="multipart/form-data">
-                    <div class="head">
-                        <i class="fa-solid fa-bullhorn"></i>
-                        <h3>Create Announcement</h3>
-                    </div>
+<div class="main">
+    <div class="table" id="main">
+             <form class="forms" action="" method="post" enctype="multipart/form-data">
                     <div class="subject" style="display: flex; align-items: center;">
-                        <label for="subject">Upload for :</label>
+                        <label for="subject">Filter for : </label>&nbsp;
                         <select name="subject" class="select" id="subject" required>
-                           
+                            <option value="">Select a Section</option>
                             <?php
                             session_start();
                             include('config.php');
                             $id = $_SESSION['id'];
 
                             // Fetch the classes created by the teacher from the database
-                            $query = mysqli_query($con, "SELECT DISTINCT subject FROM class WHERE teacher_id = '$id'");
+                            $query = mysqli_query($con, "SELECT section FROM class WHERE teacher_id = '$id'");
                             $result = mysqli_num_rows($query);
 
                             // Loop through the classes and create an option for each class
                             for ($i = 0; $i < $result; $i++) {
                                 $class = mysqli_fetch_assoc($query);
-                                echo '<option value="' . $class['subject'] . '">' . $class['subject'] . '</option>';
+                                echo '<option value="' . $class['section'] . '">' . $class['section'] . '</option>';
                             }
                             ?>
                         </select>
-                    </div>
-                    <div class="mod-container">
-                      <label for="input">Section:</label>
-                      <input class="mod" type="text" placeholder="Section" name="section" autocomplete="off" required />
-
-                      <label for="input">Title:</label>
-                      <input class="mod" type="text" placeholder="Title" name="title" autocomplete="off" required />
-
-                      <label for="input">Description:</label>
-                      <input class="mod" type="text" placeholder="Description" name="desc" autocomplete="off" required />
-                    </div>
+                    
                     <div class="field">
-                        <input type="submit" name="submit" class="btn" value="Upload">
-                        <input type="button" class="btn" name="submit" value="Back" onclick="window.history.back()">
+                        <input type="submit" name="submit" class="btn" value="Filter">
+                    </div>
                     </div>
                 </form>
-                <?php } ?>
-    </div>
+      <?php
+        include('config.php');
 
+        $id = $_SESSION['id'];
+        
+        if (isset($_POST['submit'])) {
+            $section = $_POST['subject'];
+            // Query the logs table for the row with the matching student_id and subject
+            $query = mysqli_query($con, "SELECT  classcode, subject, section, schedule, teacher_id
+            FROM class WHERE teacher_id = $id AND section = '$section'");
+            echo '<table border="2px" style="border-collapse: collapse; width: 100%">';
+            echo '<tr style="width: 100%;">';
+            echo '<th style="width: 100px; text-align: center;">Subject</th>';
+            echo '<th style="width: 100px; text-align: center;">Section</th>';
+            echo '<th style="width: 100px; text-align: center;">Schedule</th>';
+            echo '</tr>';
+
+            while ($row = mysqli_fetch_assoc($query)) {
+                echo '<tr style="width: 100%;">';
+                echo '<td style="width: 100px; text-align: center;">' . $row['subject'] . '</td>';
+                echo '<td style="width: 100px; text-align: center;">' . $row['section'] . '</td>';
+                echo '<td style="width: 100px; text-align: center;">' . $row['schedule'] . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+
+        }else {
+            // Query the logs table for the row with the matching student_id
+            $query = mysqli_query($con, "SELECT  classcode, subject, section, schedule, teacher_id
+            FROM class  WHERE teacher_id = $id");
+            $result = mysqli_num_rows($query);
+
+            echo '<table border="2px" style="border-collapse: collapse; width: 100%">';
+            echo '<tr style="width: 100%;">';
+            echo '<th style="width: 100px; text-align: center;">Subject</th>';
+            echo '<th style="width: 100px; text-align: center;">Section</th>';
+            echo '<th style="width: 100px; text-align: center;">Schedule</th>';
+            echo '</tr>';
+
+            while ($row = mysqli_fetch_assoc($query)) {
+                echo '<tr style="width: 100%;">';
+                echo '<td style="width: 100px; text-align: center;">' . $row['subject'] . '</td>';
+                echo '<td style="width: 100px; text-align: center;">' . $row['section'] . '</td>';
+                echo '<td style="width: 100px; text-align: center;">' . $row['schedule'] . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
+
+        ?>
+
+    </div>
+    </div>
 </body>
 </html>

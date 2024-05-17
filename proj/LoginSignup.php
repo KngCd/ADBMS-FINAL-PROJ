@@ -236,6 +236,7 @@ session_start();
                         $row = $result->fetch_assoc();
                     
                         if (is_array($row) && !empty($row)) {
+                            $login_timestamp = null;
                             // Verify the hashed password
                             if (password_verify($password, $row['Password']) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                                 // Set a variable for successful login
@@ -243,6 +244,12 @@ session_start();
                                 $_SESSION['username'] = $row['Username'];
                                 $_SESSION['age'] = $row['Age'];
                                 $_SESSION['id'] = $row['Id'];
+
+                                // Insert the login timestamp
+                                $query = "INSERT INTO login_log (user_id, login_time) VALUES (?, NOW())";
+                                $stmt = $con->prepare($query);
+                                $stmt->bind_param("i", $row['Id']);
+                                $stmt->execute();              
                     
                                 // Redirect to the appropriate home page
                                 header("Location: SHome.php");

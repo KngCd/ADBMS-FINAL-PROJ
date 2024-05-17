@@ -49,8 +49,8 @@
                 <div class="dropdown-container">
                   <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
                   <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
-                  <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
+                  <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Meeting</a>
                 </div>
 
                 <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
@@ -108,43 +108,49 @@
 
         // Include the database configuration file
         require_once 'config.php';
-
-        // If file upload form is submitted
         if (isset($_POST["submit"])) {
-        
-          // Get the module name and description
-          $title = $_POST['title'];
-          $description = $_POST['desc'];
-          $subject = $_POST['subject'];
-          $section = $_POST['section'];
-         
-          // Fetch the class ID based on the selected subject name
-          $query = mysqli_query($con, "SELECT classcode FROM class WHERE subject = '$subject' AND section = '$section' AND teacher_id = '$id'");
-          $classcodeRow = mysqli_fetch_assoc($query);
-        
-          // Check if a row was returned from the query
-          if (!$classcodeRow) {
-                  $status = 'error';
-                  echo "<script>alert('The selected subject or section does not exist for this teacher! Please Try Again.'); window.location.href='THome.php';</script>";
+            // Get the module name and description
+            $link = $_POST['link'];
+            $subject = $_POST['subject'];
+            $section = $_POST['section'];
+          
+            // Fetch the class ID based on the selected subject name
+            $query = mysqli_query($con, "SELECT classcode FROM class WHERE subject = '$subject' AND section = '$section' AND teacher_id = '$id'");
+            $classcodeRow = mysqli_fetch_assoc($query);
+          
+            // Check if a row was returned from the query
+            if (!$classcodeRow) {
+              $status = 'error';
+              echo "<script>alert('The selected subject or section does not exist for this teacher! Please Try Again.'); window.location.href='THome.php';</script>";
+            } else {
+              // Extract the classcode value from the result
+              $classcode = $classcodeRow['classcode'];
+          
+              // Check if a meeting link already exists for the same classcode and teacher_id
+              $query = mysqli_query($con, "SELECT * FROM meetings WHERE classcode = '$classcode' AND teacher_id = '$id'");
+              $meetingRow = mysqli_fetch_assoc($query);
+          
+              // If a meeting link exists, update it
+              if ($meetingRow) {
+                $stmt = $con->prepare("UPDATE meetings SET link = ?, uploaded = NOW() WHERE classcode = ? AND teacher_id = ?");
+                $stmt->bind_param("sss", $link, $classcode, $id);
               } else {
-                  // Extract the classcode value from the result
-                  $classcode = $classcodeRow['classcode'];
-        
-                  // Prepare the SQL statement with placeholders for the document content, file type, module name, and description
-                  $stmt = $con->prepare("INSERT INTO announcement (title, description, uploaded, classcode, teacher_id) VALUES (?,?, NOW(), ?, ?)");
-                  $stmt->bind_param("ssss", $title, $description, $classcode, $id);
-        
-                  // Execute the statement and check for success
-                  if ($stmt->execute()) {
-                    echo "<script>alert('Creation Successful!'); window.location.href='THome.php';</script>";
-                  } else {
-                    echo "<script>alert('Uploading Failed!'); window.location.href='THome.php';</script>";
-                  }
-        
-                  // Close the statement
-                  $stmt->close();
+                // If a meeting link does not exist, insert it
+                $stmt = $con->prepare("INSERT INTO meetings (link, uploaded, classcode, teacher_id) VALUES (?, NOW(), ?, ?)");
+                $stmt->bind_param("sss", $link, $classcode, $id);
               }
-        }
+          
+              // Execute the statement and check for success
+              if ($stmt->execute()) {
+                echo "<script>alert('Success! Please wait for your students to join.    '); window.location.href='THome.php';</script>";
+              } else {
+                echo "<script>alert('Failed!'); window.location.href='THome.php';</script>";
+              }
+          
+              // Close the statement
+              $stmt->close();
+            }
+          }
 
       else{
     ?>
@@ -180,12 +186,8 @@
                     <div class="mod-container">
                       <label for="input">Section:</label>
                       <input class="mod" type="text" placeholder="Section" name="section" autocomplete="off" required />
-
-                      <label for="input">Title:</label>
-                      <input class="mod" type="text" placeholder="Title" name="title" autocomplete="off" required />
-
-                      <label for="input">Description:</label>
-                      <input class="mod" type="text" placeholder="Description" name="desc" autocomplete="off" required />
+                      <label for="input">Meeting Link:</label>
+                      <input class="mod" type="url" placeholder="Link" name="link" autocomplete="off" required />
                     </div>
                     <div class="field">
                         <input type="submit" name="submit" class="btn" value="Upload">

@@ -17,8 +17,9 @@
         <div class="left-side">
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
-            <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="THome.php"><i class="fa-solid fa-house"></i>Home</a>
+            <a class="link" href="schedule_t.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Class<i class="fa fa-caret-down"></i></span>
@@ -40,8 +41,17 @@
                   }
                   ?>
                 </div>
-            <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
+                <button class="dropdown-btn">
+                  <i class="fa-regular fa-square-plus"></i>
+                  <span>Add<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
+                  <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
+                </div>
+            <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
             <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
@@ -80,10 +90,15 @@
           </script>
 
     <div class="right-side">
-      <button onclick="location.href='create-subject.php'">
+    <button onclick="location.href='create-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
+      <button onclick="location.href='#'">
             <i class="fa-solid fa-user"></i>
+        </button>
+        <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 

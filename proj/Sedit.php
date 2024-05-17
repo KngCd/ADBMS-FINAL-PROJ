@@ -17,37 +17,96 @@
         <div class="left-side">
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
-            <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="SHome.php"><i class="fa-solid fa-house"></i>Home</a>
+            <a class="link" href="schedule_s.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar_s.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
-              <span>Class<i class="fa fa-caret-down"></i></span>
+              <span>Enrolled<i class="fa fa-caret-down"></i></span>
             </button>
             <div class="dropdown-container">
             <?php 
                   session_start();
                   include('config.php');
-                  $id = $_SESSION['id'];;
+                  $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
       
                   // Fetch the classes created by the teacher from the database
-                  $query = mysqli_query($con, "SELECT subject FROM class WHERE teacher_id = '$id'");
+                  $query = mysqli_query($con, "SELECT subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode WHERE cs.student_id = '$id' 
+                  AND c.classcode = '$classcode'");
                   $result = mysqli_num_rows($query);
-
-                  // Loop through the classes and create a link for each class
-                  for ($i = 0; $i < $result; $i++) {
-                    $class = mysqli_fetch_assoc($query);
-                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['subject'] . '</a>';
+                  $row = mysqli_fetch_assoc($query);
+          
+                  if (isset($row)) {
+                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $row['subject'] . '</a>';
                   }
                   ?>
                 </div>
-            <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
-            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
+                <button class="dropdown-btn">
+                   <i class="fa-solid fa-list-check"></i>
+                  <span>To-Do<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                <?php 
+                  include('config.php');
+                  $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
+
+                  // Fetch the pending activities by the student from the database
+                  $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, ac.act_id, ac.activity, ac.topic, ac.classcode, ac.teacher_id
+                  FROM class_student cs
+                  JOIN class c ON cs.classcode = c.classcode 
+                  JOIN activity ac ON c.classcode = ac.classcode
+                  LEFT JOIN activitylog al ON ac.act_id = al.activity_id AND al.student_id = $id
+                  WHERE cs.student_id = $id AND (al.activity_id IS NULL OR al.student_id IS NULL)");
+                  $result = mysqli_num_rows($query);
+
+                  if ($result == 0) {
+                      echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Activities yet!' . '</a>';
+                  } else {
+                      // Loop through the classes and create a link for each class
+                      for ($i = 0; $i < $result; $i++) {
+                          $class = mysqli_fetch_assoc($query);
+                          echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['topic'] . ' / '.'<b>' . $class['subject'] . '</b>'. '</a>';
+                      }
+                  }
+              ?>
+                </div>
+                <button class="dropdown-btn">
+                 <i class="fa-regular fa-handshake"></i>
+                  <span>Meeting-Links<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                <?php 
+                include('config.php');
+                $id = $_SESSION['id'];
+
+                // Fetch the pending activities by the student from the database
+                $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, m.link, m.classcode, m.teacher_id
+                FROM class_student cs
+                JOIN class c ON cs.classcode = c.classcode
+                JOIN meetings m ON c.classcode = m.classcode AND c.teacher_id = m.teacher_id
+                WHERE cs.student_id = $id");
+                $result = mysqli_num_rows($query);
+
+                if ($result == 0) {
+                  echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Meetings yet!' . '</a>';
+              } else {
+                // Loop through the classes and create a link for each class
+                for ($i = 0; $i < $result; $i++) {
+                  $class = mysqli_fetch_assoc($query);
+                  $link = $class['link']; // Fetch the link from the database
+                  echo '<a class="link2" href="' . $link . '" target="_blank"><i class="fa-solid fa-link"></i>'. '- '.'<b>' . $class['subject'] . '</b>' . '</a>';
+                }
+              }
+                ?>
+                </div> <br><br><br><br>
+            <a class="link" href="logout.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
           <i  id="school-icon" class="fa-solid fa-book-open"></i>
-          <a class="tm" href="THome.php"><p>Task Mastery</p> </a> 
+          <a class="tm" href="SHome.php"><p>Task Mastery</p> </a> 
             </div>
           <script>
             function openNav() {
@@ -80,10 +139,15 @@
           </script>
 
     <div class="right-side">
-      <button onclick="location.href='create-subject.php'">
+    <button onclick="location.href='join-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
+      <button onclick="location.href='Sedit.php'">
             <i class="fa-solid fa-user"></i>
+      </button>
+      <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 

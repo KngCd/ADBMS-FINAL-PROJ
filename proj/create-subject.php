@@ -9,27 +9,50 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <title>Task Mastery</title>
+  <title>Create Class</title>
 </head>
 <body>
           
   <div class="header">
       <div class="left-side">
       <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a class="link" href="#"><i class="fa-solid fa-house"></i>Home</a>
-        <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
+        <a class="link" href="THome.php"><i class="fa-solid fa-house"></i>Home</a>
+        <a class="link" href="schedule_t.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
         <button class="dropdown-btn">
-          <i class="fa-solid fa-graduation-cap"></i>
-          <span>Enrolled <i class="fa fa-caret-down"></i></span>
-        </button>
-        <div class="dropdown-container">
-          <a class="link2" href="#">Class 1</a>
-          <a class="link2" href="#">Class 2</a>
-          <a class="link2" href="#">Class 3</a>
-        </div>
-        <a class="link-todo" href="#"><i class="fa-solid fa-list-check"></i>To-Do</a>
-        <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+              <i class="fa-solid fa-graduation-cap"></i>
+              <span>Class<i class="fa fa-caret-down"></i></span>
+            </button>
+            <div class="dropdown-container">
+            <?php 
+                  session_start();
+                  include('config.php');
+                  $id = $_SESSION['id'];;
+      
+                  // Fetch the classes created by the teacher from the database
+                  $query = mysqli_query($con, "SELECT subject FROM class WHERE teacher_id = '$id'");
+                  $result = mysqli_num_rows($query);
+
+                  // Loop through the classes and create a link for each class
+                  for ($i = 0; $i < $result; $i++) {
+                    $class = mysqli_fetch_assoc($query);
+                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['subject'] . '</a>';
+                  }
+                  ?>
+                </div>
+            <button class="dropdown-btn">
+                  <i class="fa-regular fa-square-plus"></i>
+                  <span>Add<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
+                  <a class="link2" href="upload_act.php"><i class="fa fa-circle fa-fw"></i>Activity</a>
+                  <a class="link2" href="upload_ann.php"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                  <a class="link2" href="meeting.php"><i class="fa fa-circle fa-fw"></i>Meeting</a>
+                </div>
+        <a class="link" href="monitor.php"><i class="fa-solid fa-chart-bar"></i>Monitor Students</a><br><br><br><br>
+        <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
       </div>
 
       <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -72,16 +95,20 @@
       </div>
 
     <div class="right-side">
-      <button id="create-button" type="button">
+    <button onclick="location.href='#'">
             <i class="fa-solid fa-plus"></i>
       </button>
+      <button onclick="location.href='Tedit.php'">
             <i class="fa-solid fa-user"></i>
+        </button>
+        <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 
     <div class="body-section">
     <?php
-            session_start();
             include('config.php');
             $id = $_SESSION['id'];
             $query = mysqli_query($con, "SELECT * FROM teachers WHERE Id = $id ");
@@ -109,11 +136,15 @@
 
                 $randomCode = generateRandomCode(6, $con);
                 $subject = mysqli_real_escape_string($con, $_POST['subject']);
+                $section = mysqli_real_escape_string($con, $_POST['section']);
+                $schedule = mysqli_real_escape_string($con, $_POST['schedule']);
                 $_SESSION['randomCode'] = $randomCode;
                 $_SESSION['subject'] = $subject;
+                $_SESSION['section'] = $section;
+                $_SESSION['schedule'] = $schedule;
 
                 // Insert the random code, subject, and teacher's ID into the database
-                $sql = "INSERT INTO class (classcode, subject, teacher_id) VALUES ('$randomCode', '$subject', '$id')";
+                $sql = "INSERT INTO class (classcode, subject, section, schedule, teacher_id) VALUES ('$randomCode', '$subject', '$section', '$schedule', '$id')";
                 $result = mysqli_query($con, $sql);
 
                 if ($result) {
@@ -125,14 +156,23 @@
         else{
         ?>
         <div class="body-section">
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <form class="class" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div class="input-wrapper">
                     <input type='text' id='input' name="subject" autocomplete="off" required >
                     <label for='input' class='placeholder'>Subject Name</label>
                 </div>
+                <div class="input-wrapper">
+                    <input type='text' id='input' name="section" autocomplete="off" required >
+                    <label for='input' class='placeholder'>Section</label>
+                </div>
+                <div class="input-wrapper">
+                    <input type='text' id='input' name="schedule" autocomplete="off" required >
+                    <label for='input' class='placeholder'>Schedule</label>
+                </div>
 
                 <div class="field">
                     <input type="submit" class="btn" name="create" value="Create">
+                    <input type="button" class="btn" name="submit" value="Back" onclick="window.history.back()">
                 </div>
             </form>
         </div>

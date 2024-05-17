@@ -19,25 +19,27 @@
           <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a><br><br>
             <a class="link" href="SHome.php"><i class="fa-solid fa-house"></i>Home</a>
-            <a class="link" href="#"><i class="fa-solid fa-calendar"></i>Calendar</a>
+            <a class="link" href="schedule_s.php"><i class="fa-regular fa-clock"></i>Schedule</a>
+            <a class="link" href="calendar_s.php"><i class="fa-solid fa-calendar"></i>Calendar</a>
             <button class="dropdown-btn">
               <i class="fa-solid fa-graduation-cap"></i>
-              <span>Class<i class="fa fa-caret-down"></i></span>
+              <span>Enrolled<i class="fa fa-caret-down"></i></span>
             </button>
             <div class="dropdown-container">
             <?php 
                   session_start();
                   include('config.php');
-                  $id = $_SESSION['id'];;
+                  $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
       
-                  // Fetch the classes joined by the student from the database
-                  $query = mysqli_query($con, "SELECT subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode WHERE student_id = '$id'");
+                  // Fetch the classes created by the teacher from the database
+                  $query = mysqli_query($con, "SELECT subject FROM class_student cs JOIN class c ON cs.classcode = c.classcode WHERE cs.student_id = '$id' 
+                  AND c.classcode = '$classcode'");
                   $result = mysqli_num_rows($query);
-
-                  // Loop through the classes and create a link for each class
-                  for ($i = 0; $i < $result; $i++) {
-                    $class = mysqli_fetch_assoc($query);
-                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['subject'] . '</a>';
+                  $row = mysqli_fetch_assoc($query);
+          
+                  if (isset($row)) {
+                    echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $row['subject'] . '</a>';
                   }
                   ?>
                 </div>
@@ -46,13 +48,62 @@
                   <span>To-Do<i class="fa fa-caret-down"></i></span>
                 </button>
                 <div class="dropdown-container">
-                  <a class="link2" href="upload_module.php"><i class="fa fa-circle fa-fw"></i>Module</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Activity</a>
-                  <a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>Announcement</a>
+                <?php 
+                  include('config.php');
+                  $id = $_SESSION['id'];
+                  $classcode = $_POST['classcode'];
+
+                  // Fetch the pending activities by the student from the database
+                  $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, ac.act_id, ac.activity, ac.topic, ac.classcode, ac.teacher_id
+                  FROM class_student cs
+                  JOIN class c ON cs.classcode = c.classcode 
+                  JOIN activity ac ON c.classcode = ac.classcode
+                  LEFT JOIN activitylog al ON ac.act_id = al.activity_id AND al.student_id = $id
+                  WHERE cs.student_id = $id AND (al.activity_id IS NULL OR al.student_id IS NULL)");
+                  $result = mysqli_num_rows($query);
+
+                  if ($result == 0) {
+                      echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Activities yet!' . '</a>';
+                  } else {
+                      // Loop through the classes and create a link for each class
+                      for ($i = 0; $i < $result; $i++) {
+                          $class = mysqli_fetch_assoc($query);
+                          echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . $class['topic'] . ' / '.'<b>' . $class['subject'] . '</b>'. '</a>';
+                      }
+                  }
+              ?>
                 </div>
 
-            <a class="link" href="#"><i class="fa-solid fa-gear"></i>Settings</a><br><br><br><br>
-            <a class="link" href="LoginSignup.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
+                <button class="dropdown-btn">
+                 <i class="fa-regular fa-handshake"></i>
+                  <span>Meeting-Links<i class="fa fa-caret-down"></i></span>
+                </button>
+                <div class="dropdown-container">
+                <?php 
+                include('config.php');
+                $id = $_SESSION['id'];
+
+                // Fetch the pending activities by the student from the database
+                $query = mysqli_query($con, "SELECT c.classcode, c.subject, cs.classcode, cs.student_id, m.link, m.classcode, m.teacher_id
+                FROM class_student cs
+                JOIN class c ON cs.classcode = c.classcode
+                JOIN meetings m ON c.classcode = m.classcode AND c.teacher_id = m.teacher_id
+                WHERE cs.student_id = $id");
+                $result = mysqli_num_rows($query);
+
+                if ($result == 0) {
+                  echo '<a class="link2" href="#"><i class="fa fa-circle fa-fw"></i>' . 'No Meetings yet!' . '</a>';
+              } else {
+                // Loop through the classes and create a link for each class
+                for ($i = 0; $i < $result; $i++) {
+                  $class = mysqli_fetch_assoc($query);
+                  $link = $class['link']; // Fetch the link from the database
+                  echo '<a class="link2" href="' . $link . '" target="_blank"><i class="fa-solid fa-link"></i>'. '- '.'<b>' . $class['subject'] . '</b>' . '</a>';
+                }
+              }
+                ?>
+                </div> <br><br><br><br>
+            <a class="link" href="logout.php"><i class="fa-solid fa-right-from-bracket"></i>LOGOUT</a>
           </div>
 
           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
@@ -90,12 +141,15 @@
           </div>
 
     <div class="right-side">
-      <button>
+    <button onclick="location.href='join-subject.php'">
             <i class="fa-solid fa-plus"></i>
       </button>
-      <button>
+      <button onclick="location.href='Sedit.php'">
             <i class="fa-solid fa-user"></i>
-        </button>
+      </button>
+      <button onclick="location.href='tchat.php'">
+            <i class="fa-solid fa-inbox"></i>
+      </button>
       </div>
     </div>
 
@@ -109,11 +163,13 @@
         
           // Get file info
           $fileName = basename($_FILES["document"]["name"]);
-          
+        
           $id = $_SESSION['id'];
           $classcode = $_POST['classcode'];
           $act_id = $_POST['act_id'];
+          $comment = $_POST['comment'];
           $status = 1;
+        
           // Allow certain file formats
           $allowTypes = array('pdf', 'doc', 'docx', 'txt','pptx', 'xlsx');
           if (in_array(pathinfo($fileName, PATHINFO_EXTENSION), $allowTypes)) {
@@ -123,24 +179,73 @@
               // Get the file type
               $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         
+              // Fetch the class ID based on the selected subject name
+              $query = mysqli_query($con, "SELECT t.Username, c.subject, cs.classcode FROM class_student cs JOIN class c ON cs.classcode = c.classcode 
+              JOIN teachers t ON c.teacher_id = t.Id WHERE cs.student_id = '$id' AND c.classcode = '$classcode'");
+              $classcodeRow = mysqli_fetch_assoc($query);
+        
+              // Check if a row was returned from the query
+              if (!$classcodeRow) {
+                  $status = 'error';
+                  $statusMsg = "The selected subject does not exist for this student.";
+              } else {
+                  // Extract the classcode value from the result
+                  $classcode = $classcodeRow['classcode'];
+        
                   // Prepare the SQL statement with placeholders for the document content, file type, module name, and description
-                  $stmt = $con->prepare("INSERT INTO activitylog (activity_id, file, filetype, status, uploaded, classcode, teacher_id) VALUES (?,?,?,?, NOW(),?,?)");
-                  $stmt->bind_param("ssssss", $act_id, $docContent, $fileType, $status, $classcode, $id);
+                  $stmt = $con->prepare("INSERT INTO activitylog (activity_id, file, comment, filetype, status, uploaded, classcode, student_id) VALUES (?,?,?,?,?, NOW(),?,?)");
+                  $stmt->bind_param("sssssss", $act_id, $docContent, $comment, $fileType, $status, $classcode, $id);
         
                   // Execute the statement and check for success
                   if ($stmt->execute()) {
-                    echo "<script>alert('Upload Successful!'); window.location.href = 'SHome.php'";
-                  } else {
-                      $status = 'error';
-                      $statusMsg = "Document upload failed, please try again.";
+                    echo "<script>alert('Upload Successful!'); window.location.href='SHome.php';</script>";
+                  } else {;
+                    echo "<script>alert('Upload Unuccessful!'); window.location.href='SHome.php';</script>";
                   }
         
                   // Close the statement
                   $stmt->close();
+              }
           } else {
-              $status = 'error';
-              $statusMsg = 'Sorry, only PDF, DOC, DOCX, & TXT files are allowed to upload.';
+            echo "<script>alert('Upload Unuccessful!'); window.location.href='SHome.php';</script>";
           }
+        }
+        else if (isset($_POST["hand-in"])) {
+          $id = $_SESSION['id'];
+          $classcode = $_POST['classcode'];
+          $act_id = $_POST['act_id'];
+          $comment = $_POST['comment'];
+          $status = 1;
+
+          // Fetch the class ID based on the selected subject name
+          $query = mysqli_query($con, "SELECT t.Username, c.subject, cs.classcode FROM class_student cs JOIN class c ON cs.classcode = c.classcode 
+          JOIN teachers t ON c.teacher_id = t.Id WHERE cs.student_id = '$id' AND c.classcode = '$classcode'");
+          $classcodeRow = mysqli_fetch_assoc($query);
+
+              // Check if a row was returned from the query
+              if (!$classcodeRow) {
+                  $status = 'error';
+                  $statusMsg = "The selected subject does not exist for this student.";
+              } else {
+                  // Extract the classcode value from the result
+                  $classcode = $classcodeRow['classcode'];
+        
+                  // Prepare the SQL statement with placeholders for the document content, file type, module name, and description
+                  $stmt = $con->prepare("INSERT INTO activitylog (activity_id, comment, status, uploaded, classcode, student_id) VALUES (?,?,?, NOW(),?,?)");
+                  $stmt->bind_param("sssss", $act_id, $comment, $status, $classcode, $id);
+        
+                  // Execute the statement and check for success
+                  if ($stmt->execute()) {
+                    echo "<script>alert('Upload Successful!'); window.location.href='SHome.php';</script>";
+                  } else {
+                      $status = 'error';
+                      echo "<script>alert('Upload Unuccessful!'); window.location.href='SHome.php';</script>";
+                  }
+        
+                  // Close the statement
+                  $stmt->close();
+              }
+
         }
 
       else{
@@ -169,8 +274,8 @@
                         
                             if (isset($row)) {
                               echo '<div class="mod-container">';
-                              echo '<label class="label">Subject : '. '<b>'. $row['subject'] . '</b>' . '</label>';
-                              echo '<label class="label">Upload for : '. '<b>' . $row['topic'] . '</b>' .'</label>';
+                              echo '<label class="labelz">Subject : '. '<b>'. $row['subject'] . '</b>' . '</label>';
+                              echo '<label class="labelz">Upload for : '. '<b>' . $row['topic'] . '</b>' .'</label>';
                               echo '</div>';
                           } else {
                               echo "No activity found with that ID.";
@@ -184,10 +289,16 @@
                           <label>Select File to Upload:</label>
                           <input type="file" name="document" accept=".pdf,.doc,.docx,.txt,.pptx,.xlsx">
                     </div>
+                    <div class="mod-container">
+                        <label class="comment" for="input">Comment:</label>
+                        <input class="mod" type="text" placeholder="Comment to the Teacher" name="comment" autocomplete="off" required />
+                    </div>
                     <div class="field">
                         <input type="submit" name="submit" class="btn" value="Upload">
                         <input type="button" class="btn" name="submit" value="Back" onclick="window.history.back()">
                     </div>
+                    <p style= "text-align:center;"> Note: If your going to submit output without uploading any file, please click Hand-in!</p>
+                    <input type="submit" name="hand-in" class="btn" value="Hand-in">
                 </form>
                 <?php } ?>
     </div>
