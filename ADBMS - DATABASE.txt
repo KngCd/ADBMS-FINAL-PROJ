@@ -1,0 +1,185 @@
+-- Database
+
+CREATE DATABASE proj;
+
+-- Users
+
+CREATE TABLE users(
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR (300),
+    Email VARCHAR (300),
+    Age INT,
+    Password VARCHAR (300),
+    Address VARCHAR (300)
+    );
+
+-- Teachers
+
+CREATE TABLE teachers(
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR (300),
+    Email VARCHAR (300),
+    Age INT,
+    Password VARCHAR (300),
+    Address VARCHAR (300)
+    );
+
+-- Class
+
+CREATE TABLE class(
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    classcode VARCHAR (30) UNIQUE,
+    subject VARCHAR (300),
+    section VARCHAR (200),
+    schedule TEXT,
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(Id)
+    );
+
+-- Class student
+
+CREATE TABLE class_student(
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    classcode VARCHAR (30),
+    student_id INT,
+    FOREIGN KEY (student_id) REFERENCES users(Id),
+    FOREIGN KEY (classcode) REFERENCES class (classcode)
+    );
+
+-- Modules
+
+CREATE TABLE modules(
+    module_id INT PRIMARY KEY AUTO_INCREMENT,
+    module_name VARCHAR (300),
+    module LONGBLOB,
+    description TEXT,
+    filetype VARCHAR (30),
+    uploaded TIMESTAMP,
+    classcode VARCHAR(30),
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(Id),
+    FOREIGN KEY (classcode) REFERENCES class (classcode)
+    );
+
+-- Announcements
+
+CREATE TABLE announcement(
+    ann_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR (300),
+    description TEXT,
+    uploaded TIMESTAMP,
+    classcode VARCHAR(30),
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES class(teacher_id),
+    FOREIGN KEY (classcode) REFERENCES class (classcode)
+    );
+
+-- Activity
+
+CREATE TABLE activity(
+    act_id INT PRIMARY KEY AUTO_INCREMENT,
+    activity LONGBLOB,
+    topic VARCHAR (300),
+    description TEXT,
+    points INT,
+    due_date DATE,
+    time TIME,
+    filetype VARCHAR (30),
+    uploaded TIMESTAMP,
+    classcode VARCHAR(30),
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(Id),
+    FOREIGN KEY (classcode) REFERENCES class (classcode)
+    );
+
+-- Activity Log
+
+CREATE TABLE activitylog(
+    marks_id INT PRIMARY KEY AUTO_INCREMENT,
+    activity_id INT,
+    file LONGBLOB,
+    comment TEXT,
+    filetype VARCHAR (30),
+    status TINYINT,
+    uploaded TIMESTAMP,
+    classcode VARCHAR(30),
+    student_id INT,
+    FOREIGN KEY (student_id) REFERENCES class_student(student_id),
+    FOREIGN KEY (classcode) REFERENCES class_student (classcode),
+    FOREIGN KEY (activity_id) REFERENCES activity (act_id)
+    );
+
+-- Activity Grade
+
+CREATE TABLE activitygrade(
+    grade_id INT PRIMARY KEY AUTO_INCREMENT,
+    act_id INT,
+    grades INT,
+    student_id INT,
+    teacher_id INT,
+    FOREIGN KEY (student_id) REFERENCES class_student(student_id),
+    FOREIGN KEY (teacher_id) REFERENCES class (teacher_id),
+    FOREIGN KEY (act_id) REFERENCES activity (act_id)
+    );
+
+-- Meetings
+
+CREATE TABLE meetings(
+    meet_id INT PRIMARY KEY AUTO_INCREMENT,
+    link TEXT,
+    uploaded TIMESTAMP,
+    classcode VARCHAR(30),
+    teacher_id INT,
+    FOREIGN KEY (classcode) REFERENCES class(classcode),
+    FOREIGN KEY (teacher_id) REFERENCES class (teacher_id)
+    );
+
+-- Login Log
+
+CREATE TABLE login_log(
+    login_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    login_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (Id)
+    );
+
+-- Logout Log
+
+CREATE TABLE logout_log(
+    logout_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    logout_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (Id)
+    );
+
+-- Chats
+
+CREATE TABLE logs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username varchar(40) NOT NULL,
+    msg text NOT NULL
+);
+
+-- Calendar teacher
+
+CREATE TABLE tbl_events(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR (255),
+    description TEXT,
+    start_datetime DATETIME,
+    end_datetime DATETIME,
+    teacher_id INT,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(Id)
+    );
+
+-- Calendar student
+
+CREATE TABLE tbl_events2(
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR (255),
+    description TEXT,
+    start_datetime DATETIME,
+    end_datetime DATETIME,
+    student_id INT,
+    FOREIGN KEY (student_id) REFERENCES users (Id)
+    );
